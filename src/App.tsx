@@ -1,65 +1,37 @@
-import React from "react";
-import logo from "./logo.svg";
-import "./App.css";
-import {
-  collection,
-  doc,
-  getFirestore,
-  limit,
-  orderBy,
-  query,
-} from "firebase/firestore";
-import {
-  FirestoreProvider,
-  useFirestoreDocData,
-  useFirestore,
-  useFirebaseApp,
-  useFirestoreCollectionData,
-} from "reactfire";
-import { Layout, List } from "antd";
+import React from 'react';
+import './App.css';
+import { getFirestore } from 'firebase/firestore';
+import { FirestoreProvider, useFirebaseApp } from 'reactfire';
+import { Layout, theme, Typography } from 'antd';
+import { ZetaBoard } from './components/ZetaBoard';
 
 const { Header, Footer, Content } = Layout;
-
-function ZetaBoard() {
-  const firestore = useFirestore();
-  const zetaCollection = collection(firestore, "zetaAccountHealth");
-  const accountQuery = query(
-    zetaCollection,
-    orderBy("health", "asc"),
-    limit(10)
-  );
-  const { status, data: accounts } = useFirestoreCollectionData(accountQuery, {
-    idField: "id",
-  });
-
-  if (status === "loading") {
-    return <span>loading...</span>;
-  }
-
-  console.log(accounts);
-  return (
-    <List
-      bordered
-      dataSource={accounts}
-      renderItem={(account) => (
-        <List.Item>
-          {account.publicKey} {account.health}
-        </List.Item>
-      )}
-    />
-  );
-}
 
 function App() {
   const app = useFirebaseApp();
   const firestore = getFirestore(app);
+  const {
+    token: { colorBgContainer },
+  } = theme.useToken();
   return (
     <FirestoreProvider sdk={firestore}>
-      <Header>🐸 Inverse Board</Header>
-      <Content>
-        <ZetaBoard></ZetaBoard>
-      </Content>
-      <Footer></Footer>
+      <Layout style={{ height: '100vh' }}>
+        <Header>
+          <h1 className="title"> 🐸 Inverse Board</h1>
+        </Header>
+        <Content style={{ padding: '50px 50px' }}>
+          <div
+            className="site-layout-content"
+            // style={{ background: colorBgContainer }}
+          >
+            <ZetaBoard></ZetaBoard>
+          </div>
+        </Content>
+        <Footer style={{ textAlign: 'right' }}>
+          🐦 &nbsp;
+          <a href="https://twitter.com/_hahaworld">@_hahaworld</a>
+        </Footer>
+      </Layout>
     </FirestoreProvider>
   );
 }

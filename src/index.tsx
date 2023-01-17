@@ -6,25 +6,32 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
 import { FirebaseAppProvider } from "reactfire";
+import { ConfigProvider, theme } from 'antd';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBs0sl1WEwRAIdMLQ6QXAMjjNrvC4n-jh4",
-  authDomain: "mm-liquid.firebaseapp.com",
-  projectId: "mm-liquid",
-  storageBucket: "mm-liquid.appspot.com",
-  messagingSenderId: "102063149507",
-  appId: "1:102063149507:web:297a84a2627850221f6d76",
+  apiKey: 'AIzaSyBs0sl1WEwRAIdMLQ6QXAMjjNrvC4n-jh4',
+  authDomain: 'mm-liquid.firebaseapp.com',
+  projectId: 'mm-liquid',
+  storageBucket: 'mm-liquid.appspot.com',
+  messagingSenderId: '102063149507',
+  appId: '1:102063149507:web:297a84a2627850221f6d76',
 };
 
 const root = ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement
+  document.getElementById('root') as HTMLElement,
 );
 root.render(
   <React.StrictMode>
     <FirebaseAppProvider firebaseConfig={firebaseConfig}>
-      <App />
+      <ConfigProvider
+        theme={{
+          algorithm: theme.compactAlgorithm,
+        }}
+      >
+        <App />
+      </ConfigProvider>
     </FirebaseAppProvider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );
 
 // If you want to start measuring performance in your app, pass a function
