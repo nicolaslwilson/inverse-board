@@ -68,7 +68,7 @@ function ZetaStats() {
   const statList = [
     ['Total Deposits', displayDollars(stats.totalBalance) || 0],
     ['Open Interest', displayDollars(stats.totalMaintenance / 0.065 / 2) || 0],
-    ['Total Accounts', stats.totalAccounts || 0],
+    ['Active Accounts', stats.totalAccounts || 0],
   ];
 
   const statCards = statList.map(([title, value]) => (

@@ -50,36 +50,36 @@ export function DriftBoard() {
         lastUpdatedAt={lastUpdatedAt}
       ></TitleRow>
       <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
-        {/* <ZetaStats /> */}
+        <DriftStats />
         <DriftTable accounts={accounts} />
       </Space>
     </div>
   );
 }
 
-type ZetaExchangeStats = {
-  totalBalance: number;
-  totalMaintenance: number;
-  totalAccounts: number;
-};
+interface DriftExchangeStats {
+  totalCollateral: number;
+  oi: number;
+  activeAccounts: number;
+}
 
-function ZetaStats() {
+function DriftStats() {
   const firestore = useFirestore();
-  const zetaStatsRef = doc(firestore, 'zetaAccountHealth', 'stats');
+  const driftStatsRef = doc(firestore, 'zetaAccountHealth', 'drift_stats');
 
-  const { status, data } = useFirestoreDocData(zetaStatsRef);
+  const { status, data } = useFirestoreDocData(driftStatsRef);
   const loading = status === 'loading';
 
   const stats = data?.stats || {};
 
   const statList = [
-    ['Total Deposits', displayDollars(stats.totalBalance) || 0],
-    ['Open Interest', displayDollars(stats.totalMaintenance / 0.065 / 2) || 0],
-    ['Total Accounts', stats.totalAccounts || 0],
+    ['Total Deposits', displayDollars(stats.totalCollateral) || 0],
+    ['Open Interest', displayDollars(stats.oi) || 0],
+    ['Active Accounts', stats.activeAccounts || 0],
   ];
 
   const statCards = statList.map(([title, value]) => (
-    <Col span={8}>
+    <Col span={8} key={`drift-stats-${title}`}>
       <Card bordered={true}>
         <Statistic
           title={title}
