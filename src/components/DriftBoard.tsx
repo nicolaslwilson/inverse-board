@@ -60,6 +60,20 @@ export function DriftBoard() {
 interface DriftExchangeStats {
   totalCollateral: number;
   oi: number;
+  oiBySide: {
+    SOL: {
+      long: number;
+      short: number;
+    };
+    ETH: {
+      long: number;
+      short: number;
+    };
+    BTC: {
+      long: number;
+      short: number;
+    };
+  };
   activeAccounts: number;
 }
 
@@ -70,16 +84,28 @@ function DriftStats() {
   const { status, data } = useFirestoreDocData(driftStatsRef);
   const loading = status === 'loading';
 
-  const stats = data?.stats || {};
+  let statList = Array(4);
 
-  const statList = [
+  const stats: DriftExchangeStats = data?.stats || {};
+  const oiBySide: DriftExchangeStats['oiBySide'] = stats.oiBySide;
+
+  let longOi = 0;
+  let shortOi = 0;
+
+  Object.values(oiBySide).forEach((market) => {
+    longOi += market.long;
+    shortOi += market.short;
+  });
+
+  statList = [
     ['Total Deposits', displayDollars(stats.totalCollateral) || 0],
-    ['Open Interest', displayDollars(stats.oi) || 0],
+    ['Long Open Interest', displayDollars(longOi) || 0],
+    ['Short Open Interest', displayDollars(shortOi) || 0],
     ['Active Accounts', stats.activeAccounts || 0],
   ];
 
   const statCards = statList.map(([title, value]) => (
-    <Col span={8} key={`drift-stats-${title}`}>
+    <Col span={6} key={`drift-stats-${title}`}>
       <Card bordered={true}>
         <Statistic
           title={title}
