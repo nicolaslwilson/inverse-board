@@ -33,7 +33,7 @@ function App() {
 
   return (
     <FirestoreProvider sdk={firestore}>
-      <Layout style={{ height: '100vh' }}>
+      <Layout>
         <Header>
           <div>
             <h1 className="title">🐸 Inverse Board</h1>

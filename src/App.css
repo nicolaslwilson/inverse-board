@@ -1,7 +1,22 @@
 
+.ant-layout {
+  min-height: 100vh;
+}
+
   .content {
     padding: 1em;
   }
+
+  .title {
+  color: whitesmoke;
+  float: left;
+}
+
+.nav {
+  float: left;
+  margin: 0 15px;
+}
+
 
 @media screen and (min-width: 700px) {
   .site-layout-content {
@@ -18,12 +33,5 @@
   }
 }
 
-.title {
-  color: whitesmoke;
-  float: left;
-}
 
-.nav {
-  float: left;
-  margin: 0 15px;
-}
+
