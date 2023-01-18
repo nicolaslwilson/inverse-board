@@ -87,24 +87,34 @@ function DriftStats() {
   let statList = Array(4);
 
   const stats: DriftExchangeStats = data?.stats || {};
-  const oiBySide: DriftExchangeStats['oiBySide'] = stats.oiBySide;
-
   let longOi = 0;
   let shortOi = 0;
 
-  Object.values(oiBySide).forEach((market) => {
-    longOi += market.long;
-    shortOi += market.short;
-  });
+  if (!loading) {
+    const oiBySide: DriftExchangeStats['oiBySide'] = stats.oiBySide;
+
+    Object.values(oiBySide).forEach((market) => {
+      longOi += market.long;
+      shortOi += market.short;
+    });
+  }
 
   statList = [
     ['Total Deposits', displayDollars(stats.totalCollateral) || 0],
-    ['Long Open Interest', displayDollars(longOi) || 0],
-    ['Short Open Interest', displayDollars(shortOi) || 0],
+    [
+      'Long Open Interest',
+      displayDollars(longOi),
+      { valueStyle: { color: 'green' } },
+    ],
+    [
+      'Short Open Interest',
+      displayDollars(shortOi),
+      { valueStyle: { color: 'red' } },
+    ],
     ['Active Accounts', stats.activeAccounts || 0],
   ];
 
-  const statCards = statList.map(([title, value]) => (
+  const statCards = statList.map(([title, value, extra]) => (
     <Col span={6} key={`drift-stats-${title}`}>
       <Card bordered={true}>
         <Statistic
@@ -112,6 +122,7 @@ function DriftStats() {
           value={value}
           precision={0}
           loading={loading}
+          {...(extra || {})}
         />
       </Card>
     </Col>

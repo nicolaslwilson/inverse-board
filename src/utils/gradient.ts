@@ -2,6 +2,7 @@ import Gradient from 'javascript-color-gradient';
 
 export const HealthGradient = new Gradient().setColorGradient(
   '#ff0000',
+  '#FFA500',
   '#87d068',
 );
 
