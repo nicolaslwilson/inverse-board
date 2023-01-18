@@ -115,7 +115,13 @@ function DriftStats() {
   ];
 
   const statCards = statList.map(([title, value, extra]) => (
-    <Col span={6} key={`drift-stats-${title}`}>
+    <Col
+      key={`drift-stats-${title}`}
+      xs={24}
+      sm={12}
+      md={6}
+      className="drift-stat"
+    >
       <Card bordered={true}>
         <Statistic
           title={title}
@@ -169,13 +175,17 @@ function DriftTable({ accounts }: { accounts: DriftAccountHealth[] }) {
       render: (health: number) => <HealthBar health={health / 100}></HealthBar>,
     },
     {
-      title: 'Market',
+      title: 'Perp Positions',
       dataIndex: 'positions',
       key: 'positions',
       align: 'center',
       render: (positions: DriftAccountHealth['positions']) =>
         positions.map((pos) => (
-          <AssetTag asset={pos.asset} side={pos.side}></AssetTag>
+          <AssetTag
+            key={pos.asset}
+            asset={pos.asset}
+            side={pos.side}
+          ></AssetTag>
         )),
     },
   ];

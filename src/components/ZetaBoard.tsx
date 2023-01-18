@@ -72,7 +72,7 @@ function ZetaStats() {
   ];
 
   const statCards = statList.map(([title, value]) => (
-    <Col span={8} key={`stats-${title}`}>
+    <Col key={`stats-${title}`} xs={24} sm={8}>
       <Card bordered={true}>
         <Statistic
           title={title}
@@ -84,7 +84,7 @@ function ZetaStats() {
     </Col>
   ));
 
-  return <Row gutter={16}>{statCards}</Row>;
+  return <Row gutter={{ xs: 8, sm: 8, md: 12, lg: 16 }}>{statCards}</Row>;
 }
 
 function ZetaTable({ accounts }: { accounts: ZetaAccountHealthData[] }) {
@@ -116,6 +116,7 @@ function ZetaTable({ accounts }: { accounts: ZetaAccountHealthData[] }) {
       key: 'upnl',
       align: 'right',
       render: (upnl: number) => <DisplayPnL pnl={upnl}></DisplayPnL>,
+      responsive: ['lg'],
     },
     {
       title: 'Health',

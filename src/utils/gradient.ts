@@ -8,5 +8,5 @@ export const HealthGradient = new Gradient().setColorGradient(
 
 export function getColorForHealth(health: number) {
   const index = Math.floor((health || 0) * 10);
-  return HealthGradient.getColor(index);
+  return HealthGradient.getColor(Math.max(index, 1));
 }

@@ -47,7 +47,7 @@ function App() {
             />
           </div>
         </Header>
-        <Content style={{ padding: '50px 50px' }}>
+        <Content className="content">
           <div
             className="site-layout-content"
             // style={{ background: colorBgContainer }}
