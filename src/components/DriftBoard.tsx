@@ -9,17 +9,24 @@ import { DisplayKey } from './DisplayKey';
 import { TitleRow } from './TitleRow';
 import { AssetTag } from './AssetTag';
 
-interface ZetaAccountHealthData {
+interface DriftAccountHealth {
   publicKey: string;
+  authority: string;
+  collateral: number;
   health: number;
-  balance: number;
-  margin: number;
+  positions: { asset: string; side: string }[];
+  pnl: number;
 }
-export function ZetaBoard() {
-  const firestore = useFirestore();
-  const zetaAccountRef = doc(firestore, 'zetaAccountHealth', 'accounts');
 
-  const { status, data } = useFirestoreDoc(zetaAccountRef);
+export function DriftBoard() {
+  const firestore = useFirestore();
+  const driftAccountsRef = doc(
+    firestore,
+    'zetaAccountHealth',
+    'drift_accounts',
+  );
+
+  const { status, data } = useFirestoreDoc(driftAccountsRef);
 
   // const { status, data:  } = (accountQuery, {
   //   idField: 'id',
@@ -39,12 +46,12 @@ export function ZetaBoard() {
   return (
     <div>
       <TitleRow
-        title="Zeta Exchange Stats"
+        title="Drift Exchange Stats"
         lastUpdatedAt={lastUpdatedAt}
       ></TitleRow>
       <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
-        <ZetaStats />
-        <ZetaTable accounts={accounts} />
+        {/* <ZetaStats /> */}
+        <DriftTable accounts={accounts} />
       </Space>
     </div>
   );
@@ -72,7 +79,7 @@ function ZetaStats() {
   ];
 
   const statCards = statList.map(([title, value]) => (
-    <Col span={8} key={`stats-${title}`}>
+    <Col span={8}>
       <Card bordered={true}>
         <Statistic
           title={title}
@@ -87,8 +94,8 @@ function ZetaStats() {
   return <Row gutter={16}>{statCards}</Row>;
 }
 
-function ZetaTable({ accounts }: { accounts: ZetaAccountHealthData[] }) {
-  const columns: ColumnsType<ZetaAccountHealthData> = [
+function DriftTable({ accounts }: { accounts: DriftAccountHealth[] }) {
+  const columns: ColumnsType<DriftAccountHealth> = [
     {
       title: 'Account',
       dataIndex: 'publicKey',
@@ -115,26 +122,30 @@ function ZetaTable({ accounts }: { accounts: ZetaAccountHealthData[] }) {
       dataIndex: 'upnl',
       key: 'upnl',
       align: 'right',
-      render: (upnl: number) => <DisplayPnL pnl={upnl}></DisplayPnL>,
+      responsive: ['lg'],
+      render: (pnl: number) => <DisplayPnL pnl={pnl}></DisplayPnL>,
     },
     {
       title: 'Health',
       dataIndex: 'health',
       key: 'health',
-      render: (health: number) => <HealthBar health={health}></HealthBar>,
+      render: (health: number) => <HealthBar health={health / 100}></HealthBar>,
     },
     {
       title: 'Market',
-      dataIndex: 'asset',
-      key: 'asset',
+      dataIndex: 'positions',
+      key: 'positions',
       align: 'center',
-      render: (asset: string) => <AssetTag asset={asset}></AssetTag>,
+      render: (positions: DriftAccountHealth['positions']) =>
+        positions.map((pos) => (
+          <AssetTag asset={pos.asset} side={pos.side}></AssetTag>
+        )),
     },
   ];
   return (
     <Table
       columns={columns}
-      dataSource={accounts as ZetaAccountHealthData[]}
+      dataSource={accounts as DriftAccountHealth[]}
       rowKey="publicKey"
       pagination={false}
     ></Table>

@@ -1,11 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import { getFirestore } from 'firebase/firestore';
 import { FirestoreProvider, useFirebaseApp } from 'reactfire';
-import { Layout, theme, Typography } from 'antd';
+import { Layout, Menu, MenuProps, theme, Typography } from 'antd';
 import { ZetaBoard } from './components/ZetaBoard';
+import { DriftBoard } from './components/DriftBoard';
 
 const { Header, Footer, Content } = Layout;
+const items: MenuProps['items'] = [
+  {
+    label: 'Zeta',
+    key: 'zeta',
+  },
+  {
+    label: 'Drift',
+    key: 'drift',
+  },
+];
 
 function App() {
   const app = useFirebaseApp();
@@ -13,18 +24,43 @@ function App() {
   const {
     token: { colorBgContainer },
   } = theme.useToken();
+
+  const [current, setCurrent] = useState('zeta');
+
+  const onClick: MenuProps['onClick'] = (e) => {
+    console.log('click ', e);
+    setCurrent(e.key);
+  };
+
   return (
     <FirestoreProvider sdk={firestore}>
       <Layout style={{ height: '100vh' }}>
         <Header>
-          <h1 className="title"> 🐸 Inverse Board</h1>
+          <div>
+            <h1 className="title">🐸 Inverse Board</h1>
+            <Menu
+              className="nav"
+              theme="dark"
+              onClick={onClick}
+              selectedKeys={[current]}
+              mode="horizontal"
+              items={items}
+            />
+          </div>
         </Header>
         <Content style={{ padding: '50px 50px' }}>
           <div
             className="site-layout-content"
             // style={{ background: colorBgContainer }}
           >
-            <ZetaBoard></ZetaBoard>
+            {
+              {
+                drift: <DriftBoard></DriftBoard>,
+                zeta: <ZetaBoard></ZetaBoard>,
+              }[current]
+            }
+            {/* <DriftBoard></DriftBoard>
+            <ZetaBoard></ZetaBoard> */}
           </div>
         </Content>
         <Footer style={{ textAlign: 'right' }}>

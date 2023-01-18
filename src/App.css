@@ -5,4 +5,10 @@
 
 .title {
   color: whitesmoke;
+  float: left;
+}
+
+.nav {
+  float: left;
+  margin: 0 15px;
 }
