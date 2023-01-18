@@ -28,7 +28,6 @@ function App() {
   const [current, setCurrent] = useState('zeta');
 
   const onClick: MenuProps['onClick'] = (e) => {
-    console.log('click ', e);
     setCurrent(e.key);
   };
 
