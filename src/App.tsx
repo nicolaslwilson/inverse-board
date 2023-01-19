@@ -9,12 +9,12 @@ import { DriftBoard } from './components/DriftBoard';
 const { Header, Footer, Content } = Layout;
 const items: MenuProps['items'] = [
   {
-    label: 'Zeta',
-    key: 'zeta',
-  },
-  {
     label: 'Drift',
     key: 'drift',
+  },
+  {
+    label: 'Zeta',
+    key: 'zeta',
   },
 ];
 

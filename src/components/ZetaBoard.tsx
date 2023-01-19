@@ -14,6 +14,7 @@ interface ZetaAccountHealthData {
   health: number;
   balance: number;
   margin: number;
+  authority: string;
 }
 export function ZetaBoard() {
   const firestore = useFirestore();
@@ -93,7 +94,10 @@ function ZetaTable({ accounts }: { accounts: ZetaAccountHealthData[] }) {
       title: 'Account',
       dataIndex: 'publicKey',
       key: 'publicKey',
-      render: (key: string) => <DisplayKey publicKey={key}></DisplayKey>,
+      width: 200,
+      render: (key: string, record) => (
+        <DisplayKey publicKey={key} authority={record.authority}></DisplayKey>
+      ),
     },
 
     {
@@ -122,6 +126,7 @@ function ZetaTable({ accounts }: { accounts: ZetaAccountHealthData[] }) {
       title: 'Health',
       dataIndex: 'health',
       key: 'health',
+      width: 600,
       render: (health: number) => <HealthBar health={health}></HealthBar>,
     },
     {
