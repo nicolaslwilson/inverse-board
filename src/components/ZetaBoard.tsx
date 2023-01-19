@@ -94,7 +94,6 @@ function ZetaTable({ accounts }: { accounts: ZetaAccountHealthData[] }) {
       title: 'Account',
       dataIndex: 'publicKey',
       key: 'publicKey',
-      width: 200,
       render: (key: string, record) => (
         <DisplayKey publicKey={key} authority={record.authority}></DisplayKey>
       ),
@@ -125,8 +124,8 @@ function ZetaTable({ accounts }: { accounts: ZetaAccountHealthData[] }) {
     {
       title: 'Health',
       dataIndex: 'health',
+      align: 'center',
       key: 'health',
-      width: 600,
       render: (health: number) => <HealthBar health={health}></HealthBar>,
     },
     {
@@ -134,6 +133,7 @@ function ZetaTable({ accounts }: { accounts: ZetaAccountHealthData[] }) {
       dataIndex: 'asset',
       key: 'asset',
       align: 'center',
+      responsive: ['sm'],
       render: (asset: string) => <AssetTag asset={asset}></AssetTag>,
     },
   ];

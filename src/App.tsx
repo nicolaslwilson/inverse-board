@@ -5,6 +5,8 @@ import { FirestoreProvider, useFirebaseApp } from 'reactfire';
 import { Layout, Menu, MenuProps, theme, Typography } from 'antd';
 import { ZetaBoard } from './components/ZetaBoard';
 import { DriftBoard } from './components/DriftBoard';
+import { About } from './components/About';
+import { useViewport } from './utils/useViewport';
 
 const { Header, Footer, Content } = Layout;
 const items: MenuProps['items'] = [
@@ -36,7 +38,7 @@ function App() {
       <Layout>
         <Header>
           <div>
-            <h1 className="title">🐸 Inverse Board</h1>
+            {Title()}
             <Menu
               className="nav"
               theme="dark"
@@ -45,6 +47,9 @@ function App() {
               mode="horizontal"
               items={items}
             />
+            <div className="info">
+              <About></About>
+            </div>
           </div>
         </Header>
         <Content className="content">
@@ -72,3 +77,11 @@ function App() {
 }
 
 export default App;
+function Title() {
+  const { width } = useViewport();
+  const breakpoint = 380;
+  return (
+    <h1 className="title">🐸 {width > breakpoint ? `Inverse Board` : ''}</h1>
+  );
+}
+

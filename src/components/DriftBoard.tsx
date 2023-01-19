@@ -173,6 +173,7 @@ function DriftTable({ accounts }: { accounts: DriftAccountHealth[] }) {
     {
       title: 'Health',
       dataIndex: 'health',
+      align: 'center',
       key: 'health',
       render: (health: number) => <HealthBar health={health / 100}></HealthBar>,
     },
