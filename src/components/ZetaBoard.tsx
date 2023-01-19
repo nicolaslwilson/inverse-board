@@ -1,6 +1,6 @@
 import { doc } from 'firebase/firestore';
 import { useFirestore, useFirestoreDoc, useFirestoreDocData } from 'reactfire';
-import { Card, Col, Row, Space, Statistic, Table } from 'antd';
+import { Card, Col, Row, Space, Statistic, Table, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { displayDollars } from '../utils/displayDollars';
 import { HealthBar } from './HealthBar';
@@ -42,6 +42,7 @@ export function ZetaBoard() {
       <TitleRow
         title="Zeta Exchange Stats"
         lastUpdatedAt={lastUpdatedAt}
+        key={lastUpdatedAt}
       ></TitleRow>
       <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
         <ZetaStats />
@@ -114,7 +115,7 @@ function ZetaTable({ accounts }: { accounts: ZetaAccountHealthData[] }) {
     //   render: (margin: number) => <span>{displayDollars(margin)}</span>,
     // },
     {
-      title: 'uPnL',
+      title: () => <Tooltip title="Unrealized PnL">uPnL</Tooltip>,
       dataIndex: 'upnl',
       key: 'upnl',
       align: 'right',

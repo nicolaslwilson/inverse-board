@@ -1,4 +1,6 @@
+import { SyncOutlined } from '@ant-design/icons';
 import { Col, Row, Typography } from 'antd';
+import { useEffect, useState } from 'react';
 
 export function TitleRow({
   title,
@@ -7,6 +9,11 @@ export function TitleRow({
   title: string;
   lastUpdatedAt: string;
 }) {
+  const [spin, setSpin] = useState(true);
+  useEffect(() => {
+    const timer = setTimeout(() => setSpin(false), 1000);
+    return () => clearTimeout(timer);
+  });
   return (
     <Row align="bottom" justify="space-between">
       <Col>
@@ -14,7 +21,8 @@ export function TitleRow({
       </Col>
       <Col>
         <Typography.Title level={5} type="secondary">
-          Last updated: {lastUpdatedAt}
+          Last updated: {lastUpdatedAt} &nbsp;
+          <SyncOutlined style={{ color: 'blue' }} spin={spin} />
         </Typography.Title>
       </Col>
     </Row>

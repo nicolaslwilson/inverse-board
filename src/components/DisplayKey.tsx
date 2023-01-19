@@ -1,4 +1,4 @@
-import { Typography } from 'antd';
+import { Tooltip, Typography } from 'antd';
 
 export function DisplayKey({
   publicKey,
@@ -10,14 +10,27 @@ export function DisplayKey({
   const displayKey = publicKey.slice(0, 4).concat('...', publicKey.slice(-4));
   return (
     <>
-      <Typography.Text code style={{ marginRight: '3px' }}>
-        {ExplorerLink(publicKey, displayKey)}
-      </Typography.Text>
-      {authority && ExplorerLink(authority, '🔑')}
+      <Tooltip title="Exchange Account">
+        <Typography.Text code style={{ marginRight: '3px' }}>
+          {ExplorerLink({ publicKey, displayKey })}
+        </Typography.Text>
+      </Tooltip>
+
+      {authority && (
+        <Tooltip title="Authority Account">
+          <ExplorerLink publicKey={authority} displayKey="🔑"></ExplorerLink>
+        </Tooltip>
+      )}
     </>
   );
 }
-function ExplorerLink(publicKey: string, displayKey: string) {
+function ExplorerLink({
+  publicKey,
+  displayKey,
+}: {
+  publicKey: string;
+  displayKey: string;
+}) {
   return (
     <a
       href={`https://explorer.solana.com/address/${publicKey}`}
@@ -28,4 +41,3 @@ function ExplorerLink(publicKey: string, displayKey: string) {
     </a>
   );
 }
-

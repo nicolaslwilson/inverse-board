@@ -1,6 +1,6 @@
 import { doc } from 'firebase/firestore';
 import { useFirestore, useFirestoreDoc, useFirestoreDocData } from 'reactfire';
-import { Card, Col, Row, Space, Statistic, Table } from 'antd';
+import { Card, Col, Row, Space, Statistic, Table, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { displayDollars } from '../utils/displayDollars';
 import { HealthBar } from './HealthBar';
@@ -163,9 +163,13 @@ function DriftTable({ accounts }: { accounts: DriftAccountHealth[] }) {
     //   render: (margin: number) => <span>{displayDollars(margin)}</span>,
     // },
     {
-      title: 'uPnL',
-      dataIndex: 'upnl',
-      key: 'upnl',
+      title: () => (
+        <Tooltip title="PnL of Open Positions. Collateral amount will reflect any previously settled PnL">
+          PnL
+        </Tooltip>
+      ),
+      dataIndex: 'pnl',
+      key: 'pnl',
       align: 'right',
       responsive: ['lg'],
       render: (pnl: number) => <DisplayPnL pnl={pnl}></DisplayPnL>,
