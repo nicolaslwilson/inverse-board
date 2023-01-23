@@ -27,7 +27,7 @@ function App() {
     token: { colorBgContainer },
   } = theme.useToken();
 
-  const [current, setCurrent] = useState('zeta');
+  const [current, setCurrent] = useState('drift');
 
   const onClick: MenuProps['onClick'] = (e) => {
     setCurrent(e.key);

@@ -11,7 +11,7 @@ export function TitleRow({
 }) {
   const [spin, setSpin] = useState(true);
   useEffect(() => {
-    const timer = setTimeout(() => setSpin(false), 1000);
+    const timer = setTimeout(() => setSpin(false), 1200);
     return () => clearTimeout(timer);
   });
   return (

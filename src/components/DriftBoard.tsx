@@ -48,6 +48,7 @@ export function DriftBoard() {
       <TitleRow
         title="Drift Exchange Stats"
         lastUpdatedAt={lastUpdatedAt}
+        key={lastUpdatedAt}
       ></TitleRow>
       <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
         <DriftStats />
@@ -182,18 +183,20 @@ function DriftTable({ accounts }: { accounts: DriftAccountHealth[] }) {
       render: (health: number) => <HealthBar health={health / 100}></HealthBar>,
     },
     {
-      title: 'Perp Positions',
+      title: 'Positions',
       dataIndex: 'positions',
       key: 'positions',
       align: 'center',
       render: (positions: DriftAccountHealth['positions']) =>
-        positions.map((pos) => (
-          <AssetTag
-            key={pos.asset}
-            asset={pos.asset}
-            side={pos.side}
-          ></AssetTag>
-        )),
+        positions
+          .filter((pos) => !(pos.asset === 'USDC' && pos.side === 'long'))
+          .map((pos) => (
+            <AssetTag
+              key={pos.asset}
+              asset={pos.asset}
+              side={pos.side}
+            ></AssetTag>
+          )),
     },
   ];
   return (
