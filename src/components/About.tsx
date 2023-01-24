@@ -30,8 +30,9 @@ export function About() {
       >
         <p>
           Inverse Board displays near realtime data on accounts nearest
-          liquidation on Solana defi protocols. It was built at the Solana
-          Chicago Bootcamp in January 2023.
+          liquidation on Solana defi protocols. It utilizes Helius.xyz for
+          webhooks and RPC. It was built at the Solana Chicago Bootcamp in
+          January 2023.
         </p>
         <p>
           Follow me on Twitter
