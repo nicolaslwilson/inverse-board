@@ -20,6 +20,7 @@ import {
 } from './drift/utils';
 import { TwitterClient } from 'twitter-api-client';
 import { DriftLiquidationRecord } from './drift/drift-liquidation-record';
+import { defineSecret } from 'firebase-functions/v2/params';
 
 interface HeliusIx {
   accounts: number[];
@@ -57,31 +58,47 @@ const driftProgram = new Program(
   driftCoder,
 );
 
+const heliusAuthHeader = defineSecret('HELIUS_AUTH_HEADER');
+
 export const heliusWebhook = functions
-  .runWith({ secrets: twitterSecrets.map((secret) => secret.name) })
-  .https.onRequest(async (request, response) => {
-    const handler = new LiquidationEventHandler(getTwitterClient());
-    request.body.forEach(async (hook: HeliusWebhookTx) => {
-      const { programId, data } = checkTxForMatchingIx(hook.transaction);
-      if (data && isLiquidationIx(data)) {
-        const txSignature = hook.transaction.signatures[0];
-        console.log(getTxUrl(txSignature), programId);
-        console.log(data);
-        console.log(hook.meta.err);
-        const events = parseEventsFromLogMessage(hook.meta.logMessages);
-        await Promise.all(
-          events.map(async (event) => {
-            if (isDriftLiquidationRecord(event)) {
-              await handler.handleLiquidationEvent(
-                txSignature,
-                event.data as unknown as DriftLiquidationRecord,
-              );
-            }
-          }),
-        );
-      }
-    });
-    response.sendStatus(200);
+  .runWith({
+    secrets: [
+      ...twitterSecrets.map((secret) => secret.name),
+      heliusAuthHeader.name,
+    ],
+  })
+  .https.onRequest(async (request, response): Promise<any> => {
+    if (request.headers.authorization !== heliusAuthHeader.value()) {
+      console.log(request.headers.authorization);
+      return response.sendStatus(400);
+    }
+    let handler: LiquidationEventHandler;
+    await Promise.all(
+      request.body.map(async (hook: HeliusWebhookTx) => {
+        const { data } = checkTxForMatchingIx(hook.transaction);
+        if (data && isLiquidationIx(data) && !hook.meta.err) {
+          const txSignature = hook.transaction.signatures[0];
+          console.log(getTxUrl(txSignature));
+          console.log(data);
+          const events = parseEventsFromLogMessage(hook.meta.logMessages);
+          await Promise.all(
+            events.map(async (event) => {
+              console.log(event);
+              if (isDriftLiquidationRecord(event)) {
+                if (!handler) {
+                  handler = new LiquidationEventHandler(getTwitterClient());
+                }
+                await handler.tweetLiquidationEventWithLink(
+                  txSignature,
+                  event.data as unknown as DriftLiquidationRecord,
+                );
+              }
+            }),
+          );
+        }
+      }),
+    );
+    return response.sendStatus(200);
   });
 
 function getProgramIdForIx(ix: HeliusIx, tx: HeliusTx) {
@@ -206,16 +223,20 @@ function getTextForPerpLiquidation(data: DriftLiquidationRecord) {
   const stats = getPerpLiquidationStats(data);
   const symbol = stats.perpMark!.baseAssetSymbol;
   const side = stats.baseAssetAmount > 0 ? 'long' : 'short';
-  return `${Math.abs(
-    stats.baseAssetAmount,
-  )} ${symbol} ${side} liquidated for $${Math.abs(stats.quoteAssetAmount)}`;
+  return `${Math.abs(stats.baseAssetAmount).toFixed(
+    3,
+  )} ${symbol} ${side} liquidated for $${Math.abs(
+    stats.quoteAssetAmount,
+  ).toFixed(3)} on Drift`;
 }
 
 function getTextForSpotLiquidation(data: DriftLiquidationRecord) {
   const stats = getSpotLiquidationStats(data);
-  return `${stats.liabilityTransfer} ${
+  return `${stats.liabilityTransfer.toFixed(3)} ${
     stats.liabilityMarket!.symbol
-  } liquidated with ${stats.assetTransfer} ${stats.assetMarket!.symbol}`;
+  } liquidated with ${stats.assetTransfer.toFixed(3)} ${
+    stats.assetMarket!.symbol
+  } on Drift`;
 }
 
 function getLiquidationType(data: DriftLiquidationRecord) {
@@ -225,33 +246,34 @@ function getLiquidationType(data: DriftLiquidationRecord) {
 class LiquidationEventHandler {
   constructor(private twitter: TwitterClient) {}
 
-  public async handleLiquidationEvent(
-    txId: string,
-    data: DriftLiquidationRecord,
-  ) {
+  private getTextForLiquidationEvent(data: DriftLiquidationRecord) {
     const liqType = getLiquidationType(data);
     switch (liqType) {
       case 'liquidateSpot':
-        return this.tweetLiquidationEventWithLink(
-          txId,
-          getTextForSpotLiquidation(data),
-        );
+        return getTextForSpotLiquidation(data);
       case 'liquidatePerp':
-        return this.tweetLiquidationEventWithLink(
-          txId,
-          getTextForPerpLiquidation(data),
-        );
+        return getTextForPerpLiquidation(data);
       default:
-        console.error('Unhandled liquidation type: ', liqType);
+        return `Liquidation event on Drift `;
         break;
     }
   }
 
-  private async tweetLiquidationEventWithLink(txId: string, text: string) {
+  public async tweetLiquidationEventWithLink(
+    txId: string,
+    data: DriftLiquidationRecord,
+  ) {
     const url = getTxUrl(txId);
+    const text = this.getTextForLiquidationEvent(data);
 
     return await this.twitter.tweetsV2.createTweet({
-      text: text.concat('\n').concat(url),
+      text: text.concat(randomEmoji()).concat('\n\n').concat(url),
     });
   }
+}
+
+function randomEmoji() {
+  const options = [...'🤬🤯😤😳😱🫡🫣🫠😬😲🥴🤢🤮😖🙈'];
+  const index = Math.floor(Math.random() * options.length);
+  return options[index];
 }
