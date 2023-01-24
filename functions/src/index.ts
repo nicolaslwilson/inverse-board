@@ -69,7 +69,7 @@ export const heliusWebhook = functions
   })
   .https.onRequest(async (request, response): Promise<any> => {
     if (request.headers.authorization !== heliusAuthHeader.value()) {
-      console.log(request.headers.authorization);
+      console.error('Invalid auth header: ', request.headers.authorization);
       return response.sendStatus(400);
     }
     let handler: LiquidationEventHandler;
