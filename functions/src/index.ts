@@ -255,7 +255,6 @@ class LiquidationEventHandler {
         return getTextForPerpLiquidation(data);
       default:
         return `Liquidation event on Drift `;
-        break;
     }
   }
 
@@ -266,8 +265,8 @@ class LiquidationEventHandler {
     const url = getTxUrl(txId);
     const text = this.getTextForLiquidationEvent(data);
 
-    return await this.twitter.tweetsV2.createTweet({
-      text: text.concat(randomEmoji()).concat('\n\n').concat(url),
+    return await this.twitter.tweets.statusesUpdate({
+      status: text.concat(randomEmoji()).concat('\n\n').concat(url),
     });
   }
 }

@@ -145,7 +145,11 @@ function DriftTable({ accounts }: { accounts: DriftAccountHealth[] }) {
       dataIndex: 'publicKey',
       key: 'publicKey',
       render: (key: string, row) => (
-        <DisplayKey publicKey={key} authority={row.authority}></DisplayKey>
+        <DisplayKey
+          publicKey={key}
+          authority={row.authority}
+          exchange="drift"
+        ></DisplayKey>
       ),
     },
 
