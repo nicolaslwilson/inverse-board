@@ -265,8 +265,11 @@ class LiquidationEventHandler {
     const url = getTxUrl(txId);
     const text = this.getTextForLiquidationEvent(data);
 
-    return await this.twitter.tweets.statusesUpdate({
-      status: text.concat(randomEmoji()).concat('\n\n').concat(url),
+    return await this.twitter.tweetsV2.createTweet({
+      text: text
+        .concat(Array(3).fill(randomEmoji()).join(''))
+        .concat('\n')
+        .concat(url),
     });
   }
 }
